@@ -135,8 +135,10 @@ int main(void) {
 	/* USER CODE BEGIN RTOS_EVENTS */
 	/* add events, ... */
 	/* USER CODE END RTOS_EVENTS */
+	BCM_Init();
 	InputTask_Init();
-	InputTask1_Init();
+//	OutputTask_Init();
+
 	/* Start scheduler */
 	vTaskStartScheduler();
 

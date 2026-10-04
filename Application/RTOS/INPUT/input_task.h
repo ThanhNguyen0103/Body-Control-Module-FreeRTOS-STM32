@@ -11,6 +11,4 @@
 void InputTask(void *argument);
 void InputTask_Init(void);
 
-void InputTask1(void *argument);
-void InputTask1_Init(void);
 #endif /* RTOS_INPUT_TASK_H_ */
