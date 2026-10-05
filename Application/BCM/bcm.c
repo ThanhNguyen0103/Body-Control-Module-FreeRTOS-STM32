@@ -17,6 +17,12 @@
 
 #include "Common/types.h"
 
+#define ADC_MAX_VALUE      4095
+
+#define ECO_MAX_SPEED      45
+
+#define SPORT_MAX_SPEED    70
+
 static void BCMTask(void *argument);
 
 QueueHandle_t bcmEventQueue;
@@ -78,8 +84,32 @@ static void BCMTask(void *argument) {
 					xQueueSend(bcmOutputQueue, &output, 0);
 				}
 				break;
-			case BCM_EVENT_VEHICLE_SPEED:
-				vehicleSpeed = event.value;
+			case BCM_EVENT_SPEED_INPUT:
+
+				uint32_t targetSpeed;
+				uint32_t maxSpeed;
+
+				if (ignitionState == IGNITION_OFF) {
+					if (vehicleSpeed > 0) {
+						vehicleSpeed--;
+					}
+					break;
+				}
+
+				if (drivingMode == ECO_MODE) {
+					maxSpeed = ECO_MAX_SPEED;
+				} else {
+					maxSpeed = SPORT_MAX_SPEED;
+				}
+
+				targetSpeed = ((uint32_t) event.value * maxSpeed)
+						/ ADC_MAX_VALUE;
+
+				if (vehicleSpeed < targetSpeed) {
+					vehicleSpeed++;
+				} else if (vehicleSpeed > targetSpeed) {
+					vehicleSpeed--;
+				}
 				break;
 			default:
 				break;

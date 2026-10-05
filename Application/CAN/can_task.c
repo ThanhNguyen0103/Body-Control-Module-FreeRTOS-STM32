@@ -33,17 +33,6 @@ static void CANTask(void *argument) {
 			switch (frame.id) {
 			case CAN_ID_VEHICLE_SPEED:
 
-				if (frame.dlc >= 2) {
-					uint16_t speed;
-
-					speed = ((uint16_t) frame.data[1] << 8) | frame.data[0];
-
-					event.type = BCM_EVENT_VEHICLE_SPEED;
-					event.value = speed;
-
-					xQueueSend(bcmEventQueue, &event, 0);
-				}
-
 				break;
 
 			default:

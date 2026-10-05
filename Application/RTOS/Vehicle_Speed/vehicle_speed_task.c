@@ -38,7 +38,7 @@ static void VehicleSpeedTask(void *argument) {
 		adcValue = ADC_ReadValue();
 
 		speed = ((uint32_t) adcValue * SPEED_MAX_KMH) / ADC_MAX_VALUE;
-		event.type = BCM_EVENT_VEHICLE_SPEED;
+		event.type = BCM_EVENT_SPEED_INPUT;
 		event.value = speed;
 
 		xQueueSend(bcmEventQueue, &event, 0);
