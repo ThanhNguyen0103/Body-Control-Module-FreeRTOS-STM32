@@ -137,9 +137,9 @@ int main(void) {
 	/* USER CODE END RTOS_EVENTS */
 	BCM_Init();
 	InputTask_Init();
-//	OutputTask_Init();
-
+	OutputTask_Init();
 	/* Start scheduler */
+
 	vTaskStartScheduler();
 
 	/* We should never get here as control is now taken by the scheduler */

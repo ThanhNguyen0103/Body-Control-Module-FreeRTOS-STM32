@@ -13,13 +13,23 @@
 #include "queue.h"
 
 #include "bcm_event.h"
+#include "bcm_output.h"
+
+#include "Common/types.h"
 
 static void BCMTask(void *argument);
+
 QueueHandle_t bcmEventQueue;
+QueueHandle_t bcmOutputQueue;
+
+static IgnitionState_t ignitionState;
 
 void BCM_Init(void) {
 
+	ignitionState = IGNITION_OFF;
+
 	bcmEventQueue = xQueueCreate(10, sizeof(BCM_Event_t));
+	bcmOutputQueue = xQueueCreate(10, sizeof(BCM_Output_t));
 
 	xTaskCreate(BCMTask, "BCMTask", 128,
 	NULL, 2,
@@ -29,12 +39,23 @@ void BCM_Init(void) {
 static void BCMTask(void *argument) {
 
 	BCM_Event_t event;
-
+	BCM_Output_t output;
 	for (;;) {
 		if (xQueueReceive(bcmEventQueue, &event,
 		portMAX_DELAY) == pdPASS) {
 			switch (event.type) {
 			case BCM_EVENT_IGNITION_PRESSED:
+				ignitionState =
+						(ignitionState == IGNITION_OFF) ?
+								IGNITION_ON : IGNITION_OFF;
+
+				if (ignitionState == IGNITION_ON) {
+					output.type = BCM_OUTPUT_IGNITION_ON;
+				} else {
+					output.type = BCM_OUTPUT_IGNITION_OFF;
+				}
+
+				xQueueSend(bcmOutputQueue, &output, 0);
 
 				break;
 

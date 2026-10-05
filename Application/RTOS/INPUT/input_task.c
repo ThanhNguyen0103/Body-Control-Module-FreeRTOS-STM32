@@ -18,6 +18,17 @@
 
 static Button_t button_ignition;
 
+void InputTask_Init(void) {
+
+	Button_Init(&button_ignition,
+	GPIOB,
+	GPIO_PIN_12);
+
+	xTaskCreate(InputTask, "InputTask", 128,
+	NULL, 2,
+	NULL);
+}
+
 void InputTask(void *argument) {
 	for (;;) {
 
@@ -34,13 +45,4 @@ void InputTask(void *argument) {
 		vTaskDelay(pdMS_TO_TICKS(10));
 	}
 }
-void InputTask_Init(void) {
 
-	Button_Init(&button_ignition,
-	GPIOB,
-	GPIO_PIN_12);
-
-	xTaskCreate(InputTask, "InputTask", 128,
-	NULL, 2,
-	NULL);
-}

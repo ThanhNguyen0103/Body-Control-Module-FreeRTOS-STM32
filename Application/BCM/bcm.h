@@ -12,8 +12,10 @@
 #include "queue.h"
 
 #include "bcm_event.h"
+#include "bcm_output.h"
 
 extern QueueHandle_t bcmEventQueue;
+extern QueueHandle_t bcmOutputQueue;
 
 void BCM_Init(void);
 
