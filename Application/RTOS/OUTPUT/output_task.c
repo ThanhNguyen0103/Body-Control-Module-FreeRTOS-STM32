@@ -19,10 +19,11 @@
 
 static void OutputTask(void *argument);
 static Led_t led_ignit;
-
+static Led_t led_driving_mode;
 void OutputTask_Init(void) {
 
 	Led_Init(&led_ignit, GPIOA, GPIO_PIN_2);
+	Led_Init(&led_driving_mode, GPIOA, GPIO_PIN_1);
 
 	xTaskCreate(OutputTask, "OutputTask", 128,
 	NULL, 1,
@@ -36,17 +37,17 @@ static void OutputTask(void *argument) {
 		portMAX_DELAY) == pdPASS) {
 			switch (output.type) {
 			case BCM_OUTPUT_IGNITION_ON:
-
 				Led_On(&led_ignit);
-
 				break;
-
 			case BCM_OUTPUT_IGNITION_OFF:
-
 				Led_Off(&led_ignit);
-
 				break;
-
+			case BCM_OUTPUT_DRIVING_MODE_ECO:
+				Led_On(&led_driving_mode);
+				break;
+			case BCM_OUTPUT_DRIVING_MODE_SPORT:
+				Led_Off(&led_driving_mode);
+				break;
 			default:
 
 				break;

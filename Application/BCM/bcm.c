@@ -23,10 +23,14 @@ QueueHandle_t bcmEventQueue;
 QueueHandle_t bcmOutputQueue;
 
 static IgnitionState_t ignitionState;
+static Driving_Mode_t drivingMode;
+static uint16_t vehicleSpeed;
 
 void BCM_Init(void) {
 
 	ignitionState = IGNITION_OFF;
+	drivingMode = ECO_MODE;
+	vehicleSpeed = 0;
 
 	bcmEventQueue = xQueueCreate(10, sizeof(BCM_Event_t));
 	bcmOutputQueue = xQueueCreate(10, sizeof(BCM_Output_t));
@@ -40,6 +44,7 @@ static void BCMTask(void *argument) {
 
 	BCM_Event_t event;
 	BCM_Output_t output;
+
 	for (;;) {
 		if (xQueueReceive(bcmEventQueue, &event,
 		portMAX_DELAY) == pdPASS) {
@@ -60,9 +65,22 @@ static void BCMTask(void *argument) {
 				break;
 
 			case BCM_EVENT_DRIVING_MODE_PRESSED:
+				if (ignitionState == IGNITION_ON) {
+					drivingMode =
+							(drivingMode == ECO_MODE) ? SPORT_MODE : ECO_MODE;
 
+					if (drivingMode == ECO_MODE) {
+						output.type = BCM_OUTPUT_DRIVING_MODE_ECO;
+					} else {
+						output.type = BCM_OUTPUT_DRIVING_MODE_SPORT;
+					}
+
+					xQueueSend(bcmOutputQueue, &output, 0);
+				}
 				break;
-
+			case BCM_EVENT_VEHICLE_SPEED:
+				vehicleSpeed = event.value;
+				break;
 			default:
 				break;
 			}

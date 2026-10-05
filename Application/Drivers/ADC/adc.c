@@ -16,5 +16,6 @@ uint32_t ADC_ReadValue(void) {
 		return HAL_ADC_GetValue(&hadc1);
 
 	}
+	return 0;
 }
 

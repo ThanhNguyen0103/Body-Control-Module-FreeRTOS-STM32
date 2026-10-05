@@ -34,8 +34,6 @@ void CAN_Init(void) {
 
 	HAL_CAN_Start(&hcan);
 
-	HAL_CAN_ActivateNotification(&hcan,
-	CAN_IT_RX_FIFO0_MSG_PENDING);
 }
 bool CAN_Send(const CAN_Frame_t *frame) {
 	CAN_TxHeaderTypeDef txHeader;
@@ -82,10 +80,4 @@ bool CAN_Receive(CAN_Frame_t *frame) {
 
 	return true;
 }
-void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
-	CAN_Frame_t frame;
 
-	if (CAN_Receive(&frame)) {
-		// xử lý frame
-	}
-}
