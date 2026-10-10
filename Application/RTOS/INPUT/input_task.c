@@ -19,6 +19,7 @@
 static Button_t button_ignition;
 static Button_t button_driving_mode;
 static Button_t button_brake;
+static Button_t button_cruise;
 
 static void Input_SendEvent(BCM_EventType_t type);
 
@@ -29,8 +30,8 @@ void InputTask_Init(void) {
 	GPIO_PIN_12);
 
 	Button_Init(&button_driving_mode, GPIOB, GPIO_PIN_13);
-
 	Button_Init(&button_brake, GPIOB, GPIO_PIN_14);
+	Button_Init(&button_cruise, GPIOB, GPIO_PIN_15);
 
 	xTaskCreate(InputTask, "InputTask", 128,
 	NULL, 2,
@@ -54,6 +55,7 @@ void InputTask(void *argument) {
 		Button_Update(&button_ignition);
 		Button_Update(&button_driving_mode);
 		Button_Update(&button_brake);
+		Button_Update(&button_cruise);
 
 		if (Button_IsPressed(&button_ignition)) {
 
@@ -69,6 +71,9 @@ void InputTask(void *argument) {
 
 		if (Button_IsReleased(&button_brake)) {
 			Input_SendEvent(BCM_EVENT_BRAKE_RELEASED);
+		}
+		if (Button_IsPressed(&button_cruise)) {
+			Input_SendEvent(BCM_EVENT_CRUISE_PRESSED);
 		}
 
 		vTaskDelay(pdMS_TO_TICKS(10));

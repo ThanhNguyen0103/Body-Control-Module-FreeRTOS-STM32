@@ -48,7 +48,7 @@ static void Output_SendCAN(const BCM_Output_t *output) {
 	CAN_Frame_t frame;
 
 	frame.id = CAN_ID_BCM_STATUS;
-	frame.dlc = 5;
+	frame.dlc = 6;
 
 	frame.data[0] = (uint8_t) output->ignition;
 	frame.data[1] = (uint8_t) output->mode;
@@ -58,6 +58,8 @@ static void Output_SendCAN(const BCM_Output_t *output) {
 	frame.data[3] = (uint8_t) ((output->speed >> 8) & 0xFF);
 
 	frame.data[4] = output->brakePressed ? 1U : 0U;
+
+	frame.data[5] = output->cruiseEnabled ? 1U : 0U;
 
 	CAN_Send(&frame);
 }

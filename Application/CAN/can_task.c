@@ -52,7 +52,7 @@ static void CANTask(void *argument) {
 				continue;
 			}
 
-			if (frame.dlc < 5) {
+			if (frame.dlc < 6) {
 				continue;
 			}
 
@@ -66,8 +66,10 @@ static void CANTask(void *argument) {
 
 			newStatus.brakePressed = (frame.data[4] != 0U);
 
+			newStatus.cruiseEnabled = (frame.data[5] != 0U);
+
 			if (newStatus.ignition > 1U || newStatus.mode > 1U
-					|| frame.data[4] > 1U) {
+					|| frame.data[4] > 1U || frame.data[5] > 1U) {
 				continue;
 			}
 

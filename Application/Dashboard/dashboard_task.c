@@ -61,7 +61,8 @@ static void DashboardTask(void *argument) {
 			} else if ((status.ignition != previousStatus.ignition)
 					|| (status.mode != previousStatus.mode)
 					|| (status.speed != previousStatus.speed)
-					|| (status.brakePressed != previousStatus.brakePressed)) {
+					|| (status.brakePressed != previousStatus.brakePressed)
+					|| (status.cruiseEnabled != previousStatus.cruiseEnabled)) {
 				changed = true;
 			}
 
@@ -104,6 +105,7 @@ static void Dashboard_ShowStatus(const CAN_Status_t *status) {
 	const char *ignitionText;
 	const char *modeText;
 	const char *brakeText;
+	const char *cruiseText;
 
 	if (status == NULL) {
 		return;
@@ -112,7 +114,7 @@ static void Dashboard_ShowStatus(const CAN_Status_t *status) {
 	ignitionText = (status->ignition == 1U) ? "ON" : "OFF";
 	modeText = (status->mode == 1U) ? "SPORT" : "ECO";
 	brakeText = status->brakePressed ? "ON" : "OFF";
-
+	cruiseText = status->cruiseEnabled ? "ON" : "OFF";
 	ssd1306_Fill(Black);
 
 	/* Title */
@@ -140,5 +142,8 @@ static void Dashboard_ShowStatus(const CAN_Status_t *status) {
 	(void) snprintf(buffer, sizeof(buffer), "BRAKE: %s", brakeText);
 	ssd1306_WriteString(buffer, Font_7x10, White);
 
+	ssd1306_SetCursor(0, 58);
+	(void) snprintf(buffer, sizeof(buffer), "CRUISE: %s", cruiseText);
+	ssd1306_WriteString(buffer, Font_7x10, White);
 	ssd1306_UpdateScreen();
 }

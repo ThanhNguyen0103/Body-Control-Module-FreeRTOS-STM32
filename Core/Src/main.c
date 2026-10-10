@@ -137,8 +137,10 @@ int main(void) {
 	/* USER CODE END RTOS_EVENTS */
 	CAN_Init();
 //	BCM_Init();
+
 	CANTask_Init();
 	DashboardTask_Init();
+
 //	InputTask_Init();
 //	VehicleSpeedTask_Init();
 //	OutputTask_Init();

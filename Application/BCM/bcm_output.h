@@ -17,6 +17,7 @@ typedef struct {
 	Driving_Mode_t mode;
 	uint16_t speed;
 	bool brakePressed;
+	bool cruiseEnabled;
 
 } BCM_Output_t;
 #endif /* BCM_BCM_OUTPUT_H_ */
