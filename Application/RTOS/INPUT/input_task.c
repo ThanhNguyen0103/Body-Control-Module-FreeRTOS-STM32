@@ -41,13 +41,13 @@ void InputTask(void *argument) {
 
 			BCM_Event_t event;
 			event.type = BCM_EVENT_IGNITION_PRESSED;
-
+			event.value = 0;
 			xQueueSend(bcmEventQueue, &event, 0);
 		}
 		if (Button_IsPressed(&button_driving_mode)) {
 			BCM_Event_t event;
 			event.type = BCM_EVENT_DRIVING_MODE_PRESSED;
-
+			event.value = 0;
 			xQueueSend(bcmEventQueue, &event, 0);
 		}
 
