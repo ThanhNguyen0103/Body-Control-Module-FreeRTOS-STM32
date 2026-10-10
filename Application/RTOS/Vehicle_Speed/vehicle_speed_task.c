@@ -16,9 +16,6 @@
 
 #include "Drivers/ADC/adc.h"
 
-#define SPEED_MAX_KMH      70
-#define ADC_MAX_VALUE      4095
-
 static void VehicleSpeedTask(void *argument);
 
 void VehicleSpeedTask_Init(void) {
@@ -29,17 +26,12 @@ void VehicleSpeedTask_Init(void) {
 }
 static void VehicleSpeedTask(void *argument) {
 	uint32_t adcValue;
-	uint16_t speed;
-
 	BCM_Event_t event;
 
 	for (;;) {
-
 		adcValue = ADC_ReadValue();
-
-		speed = ((uint32_t) adcValue * SPEED_MAX_KMH) / ADC_MAX_VALUE;
 		event.type = BCM_EVENT_SPEED_INPUT;
-		event.value = speed;
+		event.value = (uint16_t) adcValue;
 
 		xQueueSend(bcmEventQueue, &event, 0);
 

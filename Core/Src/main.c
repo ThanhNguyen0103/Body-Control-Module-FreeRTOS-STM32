@@ -135,15 +135,14 @@ int main(void) {
 	/* USER CODE BEGIN RTOS_EVENTS */
 	/* add events, ... */
 	/* USER CODE END RTOS_EVENTS */
-
-	BCM_Init();
-//	CAN_Init();
-	VehicleSpeedTask_Init();
-	InputTask_Init();
-	OutputTask_Init();
-
+	CAN_Init();
+//	BCM_Init();
+	CANTask_Init();
+	DashboardTask_Init();
+//	InputTask_Init();
+//	VehicleSpeedTask_Init();
+//	OutputTask_Init();
 	/* Start scheduler */
-
 	vTaskStartScheduler();
 
 	/* We should never get here as control is now taken by the scheduler */

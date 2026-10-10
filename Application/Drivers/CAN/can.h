@@ -18,6 +18,7 @@
 #define CAN_ID_BRAKE        	0x103
 #define CAN_ID_CRUISE        	0x104
 #define CAN_ID_TURNSIGNAL    	0x105
+#define CAN_ID_BCM_STATUS       0x200
 
 typedef struct {
 	uint32_t id;
