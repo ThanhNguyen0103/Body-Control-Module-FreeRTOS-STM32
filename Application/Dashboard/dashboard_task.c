@@ -60,7 +60,8 @@ static void DashboardTask(void *argument) {
 				changed = true;
 			} else if ((status.ignition != previousStatus.ignition)
 					|| (status.mode != previousStatus.mode)
-					|| (status.speed != previousStatus.speed)) {
+					|| (status.speed != previousStatus.speed)
+					|| (status.brakePressed != previousStatus.brakePressed)) {
 				changed = true;
 			}
 
@@ -102,6 +103,7 @@ static void Dashboard_ShowStatus(const CAN_Status_t *status) {
 
 	const char *ignitionText;
 	const char *modeText;
+	const char *brakeText;
 
 	if (status == NULL) {
 		return;
@@ -109,6 +111,7 @@ static void Dashboard_ShowStatus(const CAN_Status_t *status) {
 
 	ignitionText = (status->ignition == 1U) ? "ON" : "OFF";
 	modeText = (status->mode == 1U) ? "SPORT" : "ECO";
+	brakeText = status->brakePressed ? "ON" : "OFF";
 
 	ssd1306_Fill(Black);
 
@@ -116,26 +119,25 @@ static void Dashboard_ShowStatus(const CAN_Status_t *status) {
 	ssd1306_SetCursor(0, 0);
 	ssd1306_WriteString("BCM DASHBOARD", Font_7x10, White);
 
-	/* Ignition state */
-	ssd1306_SetCursor(0, 16);
-
+	/* Ignition */
+	ssd1306_SetCursor(0, 14);
 	(void) snprintf(buffer, sizeof(buffer), "IGN: %s", ignitionText);
-
 	ssd1306_WriteString(buffer, Font_7x10, White);
 
 	/* Driving mode */
-	ssd1306_SetCursor(0, 30);
-
+	ssd1306_SetCursor(0, 26);
 	(void) snprintf(buffer, sizeof(buffer), "MODE: %s", modeText);
-
 	ssd1306_WriteString(buffer, Font_7x10, White);
 
 	/* Vehicle speed */
-	ssd1306_SetCursor(0, 44);
-
+	ssd1306_SetCursor(0, 38);
 	(void) snprintf(buffer, sizeof(buffer), "SPEED: %u km/h",
 			(unsigned int) status->speed);
+	ssd1306_WriteString(buffer, Font_7x10, White);
 
+	/* Brake */
+	ssd1306_SetCursor(0, 50);
+	(void) snprintf(buffer, sizeof(buffer), "BRAKE: %s", brakeText);
 	ssd1306_WriteString(buffer, Font_7x10, White);
 
 	ssd1306_UpdateScreen();

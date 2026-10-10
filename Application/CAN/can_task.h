@@ -15,6 +15,7 @@ typedef struct {
 	uint8_t ignition;
 	uint8_t mode;
 	uint16_t speed;
+	bool brakePressed;
 } CAN_Status_t;
 
 void CANTask_Init(void);

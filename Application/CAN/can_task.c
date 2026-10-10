@@ -52,7 +52,7 @@ static void CANTask(void *argument) {
 				continue;
 			}
 
-			if (frame.dlc < 4) {
+			if (frame.dlc < 5) {
 				continue;
 			}
 
@@ -64,7 +64,10 @@ static void CANTask(void *argument) {
 			newStatus.speed = ((uint16_t) frame.data[3] << 8)
 					| (uint16_t) frame.data[2];
 
-			if (newStatus.ignition > 1 || newStatus.mode > 1) {
+			newStatus.brakePressed = (frame.data[4] != 0U);
+
+			if (newStatus.ignition > 1U || newStatus.mode > 1U
+					|| frame.data[4] > 1U) {
 				continue;
 			}
 

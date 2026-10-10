@@ -24,6 +24,7 @@ static void Output_SendCAN(const BCM_Output_t *output);
 
 static Led_t led_ignition;
 static Led_t led_driving_mode;
+static Led_t led_brake;
 
 void OutputTask_Init(void) {
 	Led_Init(&led_ignition,
@@ -34,6 +35,10 @@ void OutputTask_Init(void) {
 	GPIOA,
 	GPIO_PIN_1);
 
+	Led_Init(&led_brake,
+	GPIOA,
+	GPIO_PIN_3);
+
 	xTaskCreate(OutputTask, "OutputTask", 128,
 	NULL, 1,
 	NULL);
@@ -43,7 +48,7 @@ static void Output_SendCAN(const BCM_Output_t *output) {
 	CAN_Frame_t frame;
 
 	frame.id = CAN_ID_BCM_STATUS;
-	frame.dlc = 4;
+	frame.dlc = 5;
 
 	frame.data[0] = (uint8_t) output->ignition;
 	frame.data[1] = (uint8_t) output->mode;
@@ -51,6 +56,8 @@ static void Output_SendCAN(const BCM_Output_t *output) {
 	frame.data[2] = (uint8_t) (output->speed & 0xFF);
 
 	frame.data[3] = (uint8_t) ((output->speed >> 8) & 0xFF);
+
+	frame.data[4] = output->brakePressed ? 1U : 0U;
 
 	CAN_Send(&frame);
 }
@@ -72,6 +79,12 @@ static void OutputTask(void *argument) {
 				Led_On(&led_driving_mode);
 			} else {
 				Led_Off(&led_driving_mode);
+			}
+
+			if (output.brakePressed) {
+				Led_On(&led_brake);
+			} else {
+				Led_Off(&led_brake);
 			}
 
 			Output_SendCAN(&output);

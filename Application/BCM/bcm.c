@@ -7,6 +7,7 @@
 
 #include "bcm.h"
 #include "main.h"
+#include <stdbool.h>
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -30,6 +31,7 @@ QueueHandle_t bcmOutputQueue;
 static IgnitionState_t ignitionState;
 static Driving_Mode_t drivingMode;
 static uint16_t vehicleSpeed;
+static bool brakePressed = false;
 
 void BCM_Init(void) {
 	ignitionState = IGNITION_OFF;
@@ -50,6 +52,7 @@ static void BCM_SendOutput(void) {
 	output.ignition = ignitionState;
 	output.mode = drivingMode;
 	output.speed = vehicleSpeed;
+	output.brakePressed = brakePressed;
 
 	xQueueSend(bcmOutputQueue, &output, 0);
 }
@@ -102,20 +105,34 @@ static void BCMTask(void *argument) {
 					maxSpeed = SPORT_MAX_SPEED;
 				}
 
-				targetSpeed = ((uint32_t) event.value * maxSpeed)
-						/ ADC_MAX_VALUE;
+				if (brakePressed) {
+					if (vehicleSpeed > 0) {
+						vehicleSpeed--;
+					}
+				} else {
 
-				if (vehicleSpeed < targetSpeed) {
-					vehicleSpeed++;
-				} else if (vehicleSpeed > targetSpeed) {
-					vehicleSpeed--;
+					targetSpeed = ((uint32_t) event.value * maxSpeed)
+							/ ADC_MAX_VALUE;
+					if (vehicleSpeed < targetSpeed) {
+						vehicleSpeed++;
+					} else if (vehicleSpeed > targetSpeed) {
+						vehicleSpeed--;
+					}
 				}
 
 				BCM_SendOutput();
 
 				break;
 			}
+			case BCM_EVENT_BRAKE_PRESSED:
+				brakePressed = true;
+				BCM_SendOutput();
+				break;
 
+			case BCM_EVENT_BRAKE_RELEASED:
+				brakePressed = false;
+				BCM_SendOutput();
+				break;
 			default:
 				break;
 			}
