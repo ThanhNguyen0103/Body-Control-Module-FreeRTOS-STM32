@@ -8,17 +8,13 @@
 #ifndef BCM_BCM_OUTPUT_H_
 #define BCM_BCM_OUTPUT_H_
 
-typedef enum {
-	BCM_OUTPUT_IGNITION_OFF = 0,
-	BCM_OUTPUT_IGNITION_ON,
-	BCM_OUTPUT_DRIVING_MODE_ECO,
-	BCM_OUTPUT_DRIVING_MODE_SPORT
-
-} BCM_OutputType_t;
+#include "stdint.h"
+#include "Common/types.h"
 
 typedef struct {
-	BCM_OutputType_t type;
+	IgnitionState_t ignition;
+	Driving_Mode_t mode;
+	uint16_t speed;
 
 } BCM_Output_t;
-
 #endif /* BCM_BCM_OUTPUT_H_ */
